@@ -1,0 +1,124 @@
+from abc import abstractmethod
+
+from .resource import Resource
+from .coordsys import CoordinateSystem, EARTHMJ2000EQ
+from .epoch import Epoch, TimeStandard, ModJulianEpoch
+from .celestial import CelestialBody
+
+class State:
+    @abstractmethod
+    def to_gmat_script(self, name: str) -> str:
+        pass
+
+class CartesianState(State):
+    def __init__(self, x: float, y: float, z: float, vx: float, vy: float, vz: float):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.vx = vx
+        self.vy = vy
+        self.vz = vz
+
+    def to_gmat_script(self, name: str) -> str:
+        return (
+            f"GMAT {name}.DisplayStateType = Cartesian;\n"
+            f"GMAT {name}.X = {self.x};\n"
+            f"GMAT {name}.Y = {self.y};\n"
+            f"GMAT {name}.Z = {self.z};\n"
+            f"GMAT {name}.VX = {self.vx};\n"
+            f"GMAT {name}.VY = {self.vy};\n"
+            f"GMAT {name}.VZ = {self.vz};"
+        )
+
+class KeplerianState(State):
+    def __init__(self, sma: float, ecc: float, inc: float, raan: float, aop: float, ta: float):
+        self.sma = sma    # Semi-major axis
+        self.ecc = ecc    # Eccentricity
+        self.inc = inc    # Inclination
+        self.raan = raan  # Right Ascension of Ascending Node
+        self.aop = aop    # Argument of Periapsis
+        self.ta = ta      # True Anomaly
+
+    def to_gmat_script(self, name: str) -> str:
+        return (
+            f"GMAT {name}.DisplayStateType = Keplerian;\n"
+            f"GMAT {name}.SMA = {self.sma};\n"
+            f"GMAT {name}.ECC = {self.ecc};\n"
+            f"GMAT {name}.INC = {self.inc};\n"
+            f"GMAT {name}.RAAN = {self.raan};\n"
+            f"GMAT {name}.AOP = {self.aop};\n"
+            f"GMAT {name}.TA = {self.ta};"
+        )
+
+class ModifiedKeplerianState(State):
+    def __init__(self, radper: float, radapo: float, inc: float, raan: float, aop: float, ta: float):
+        if radapo < radper:
+            raise Exception("Apoapsis radius must be larger than periapsis radius")
+        self.radper = radper    # Radius of perigee
+        self.radapo = radapo    # Radius of apogee
+        self.inc = inc    # Inclination
+        self.raan = raan  # Right Ascension of Ascending Node
+        self.aop = aop    # Argument of Periapsis
+        self.ta = ta      # True Anomaly
+
+    def to_gmat_script(self, name: str) -> str:
+        return (
+            f"GMAT {name}.DisplayStateType = Keplerian;\n"
+            f"GMAT {name}.RadApo = {self.radapo};\n"
+            f"GMAT {name}.RadPer = {self.radper};\n"
+            f"GMAT {name}.INC = {self.inc};\n"
+            f"GMAT {name}.RAAN = {self.raan};\n"
+            f"GMAT {name}.AOP = {self.aop};\n"
+            f"GMAT {name}.TA = {self.ta};"
+        )
+
+class BodyRelativeProperties:
+    def __init__(self, name: str, body: CelestialBody):
+        self.preamble = f"{name}.{body.name}."
+
+    def periapsis(self) -> str:
+        return self.preamble + "Periapsis"
+    
+    def apoapsis(self) -> str:
+        return self.preamble + "Apoapsis"
+    
+    def rmag(self) -> str:
+        return self.preamble + "RMAG"
+    
+    def sma(self) -> str:
+        return self.preamble + "SMA"
+    
+    def ecc(self) -> str:
+        return self.preamble + "ECC"
+    
+    def apoapsis_radius(self) -> str:
+        return self.preamble + "RadApo"
+    
+    def periapsis_radius(self) -> str:
+        return self.preamble + "RadPer"
+
+class Spacecraft(Resource):
+    def __init__(self, name: str, state: State, epoch: Epoch = ModJulianEpoch(TimeStandard.TAI, 21545.0), coord_system: CoordinateSystem = EARTHMJ2000EQ) -> None:
+        super().__init__(name)
+        self.name = name
+        self.state = state
+        self.epoch = epoch
+        self.coordinate_system = coord_system
+
+    def to_gmat_script(self) -> str:
+        base_script = (
+            f"Create Spacecraft {self.name};\n"
+            f"{self.epoch.to_gmat(self.name)}"
+            f"GMAT {self.name}.CoordinateSystem = {self.coordinate_system.name};\n"
+        )
+        state_script = self.state.to_gmat_script(self.name)
+        return base_script + state_script
+    
+    def relative_to(self, body: CelestialBody) -> BodyRelativeProperties:
+        return BodyRelativeProperties(self.name, body)
+    
+    def elapsed_days(self) -> str:
+        return f"{self.name}.ElapsedDays"
+    
+    def elapsed_secs(self) -> str:
+        return f"{self.name}.ElapsedSecs"
