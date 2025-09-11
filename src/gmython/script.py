@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 from contextlib import contextmanager
-from resources.resource import Resource
-from mission import MissionStep
+from .resources.resource import Resource
+from .mission import MissionStep
 
 class ObjectType(Enum):
     RESOURCE = 1

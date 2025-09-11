@@ -1,12 +1,12 @@
-from resources.spacecraft import KeplerianState, Spacecraft
-from resources.prop import GravityField, ForceModel, Propagator
-from resources.celestial import CelestialBody, LUNA, EARTH
-from mission import Propagate
-from resources.coordsys import CoordinateSystem, CoordinateSystemAxes
-from resources.report import keplerian_headers, build_report_reader
-import dispatch
+from gmython.resources.spacecraft import KeplerianState, Spacecraft
+from gmython.resources.prop import GravityField, ForceModel, Propagator
+from gmython.resources.celestial import CelestialBody, LUNA, EARTH
+from gmython.mission import Propagate
+from gmython.resources.coordsys import CoordinateSystem, CoordinateSystemAxes
+from gmython.resources.report import keplerian_headers, build_report_reader
+from gmython import dispatch
 from contextlib import ExitStack
-from script import Script
+from gmython.script import Script
 
 # Build the coordinate system
 coordsys = CoordinateSystem("MoonMJ2000Eq", LUNA, CoordinateSystemAxes.MJ2000Eq)
@@ -34,7 +34,7 @@ with ExitStack() as stack:
     for sat, report in zip(sats, reports):
 
         # Build the mission sequence
-        mission = Propagate(prop, [sat], [("Sat1.ElapsedSecs", "12000.0")])
+        mission = Propagate(prop, [sat], [("Sat1.ElapsedSecs", 12000.0)])
 
         # Store the mission
         missions.append(Script([coordsys, sat, model, prop, report], [mission]))

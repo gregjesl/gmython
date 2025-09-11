@@ -2,7 +2,7 @@ import subprocess
 import os
 import tempfile
 from contextlib import contextmanager
-from script import Script, ScriptObject
+from .script import Script, ScriptObject
 
 cmdlet = None
 

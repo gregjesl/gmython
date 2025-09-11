@@ -1,8 +1,8 @@
-from resources.report import build_report_reader
-from dispatch import dispatch_instance, DispatchError
-from script import Script
-from resources.variable import Variable
-from mission import ForLoop, Report
+from gmython.resources.report import build_report_reader
+from gmython.dispatch import dispatch_instance, DispatchError
+from gmython.script import Script
+from gmython.resources.variable import Variable
+from gmython.mission import ForLoop, Report
 
 # Create a variable
 variable = Variable("I")
