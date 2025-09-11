@@ -1,5 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "gmython"
-version = "0.1.0"
+version = "0.1.1"
+readme = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.8"
 dependencies = []
+
+[tools.setuptools]
+package-dir = {"" = "src" }
+
+[tools.setuptools.packages.find]
+where = ["src"]
