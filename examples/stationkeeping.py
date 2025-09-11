@@ -1,14 +1,14 @@
-from resources.spacecraft import Spacecraft, KeplerianState
-from resources.prop import GravityField, ForceModel, Propagator, CelestialBody
-from mission import Propagate, TargetBlock, Vary, Achieve, Maneuver, Report, ExitMode
-from resources.coordsys import CoordinateSystem, CoordinateSystemAxes
-from resources.celestial import EARTH, LUNA
-from resources.report import keplerian_headers, build_report_reader
-from resources.solvers import DifferentialCorrector
-from resources.burns import ImpulseiveBurn, LocalCoordinateSystem, LocalCoordinateSystemAxes
-from dispatch import dispatch_instance, DispatchError
-from script import Script
-import recipes
+from gmython.resources.spacecraft import Spacecraft, KeplerianState
+from gmython.resources.prop import GravityField, ForceModel, Propagator, CelestialBody
+from gmython.mission import Propagate, TargetBlock, Vary, Achieve, Maneuver, Report, ExitMode
+from gmython.resources.coordsys import CoordinateSystem, CoordinateSystemAxes
+from gmython.resources.celestial import EARTH, LUNA
+from gmython.resources.report import keplerian_headers, build_report_reader
+from gmython.resources.solvers import DifferentialCorrector
+from gmython.resources.burns import ImpulseiveBurn, LocalCoordinateSystem, LocalCoordinateSystemAxes
+from gmython.dispatch import dispatch_instance, DispatchError
+from gmython.script import Script
+from gmython import recipes
 
 ALTITUDE = 50 # km
 DEADBAND = 10 # km

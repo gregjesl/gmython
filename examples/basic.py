@@ -1,11 +1,11 @@
-from resources.spacecraft import Spacecraft, KeplerianState
-from resources.prop import GravityField, ForceModel, Propagator, CelestialBody
-from mission import Propagate
-from resources.coordsys import CoordinateSystem, CoordinateSystemAxes
-from resources.celestial import EARTH, LUNA
-from resources.report import keplerian_headers, build_report_reader
-from dispatch import dispatch_instance, DispatchError
-from script import Script
+from gmython.resources.spacecraft import Spacecraft, KeplerianState
+from gmython.resources.prop import GravityField, ForceModel, Propagator, CelestialBody
+from gmython.mission import Propagate
+from gmython.resources.coordsys import CoordinateSystem, CoordinateSystemAxes
+from gmython.resources.celestial import EARTH, LUNA
+from gmython.resources.report import keplerian_headers, build_report_reader
+from gmython.dispatch import dispatch_instance, DispatchError
+from gmython.script import Script
 
 # Build the coordinate system
 coordsys = CoordinateSystem("MoonMJ2000Eq", LUNA, CoordinateSystemAxes.MJ2000Eq)
@@ -27,7 +27,7 @@ fields = ["Sat1.ElapsedSecs"] + keplerian_headers(sat, coordsys)
 with build_report_reader(fields) as report:
 
     # Build the mission sequence
-    mission = Propagate(prop, [sat], [("Sat1.ElapsedSecs", "12000.0")])
+    mission = Propagate(prop, [sat], [("Sat1.ElapsedSecs", 12000.0)])
 
     # Build the script
     script = Script([coordsys, sat, model, prop, report], [mission])

@@ -1,11 +1,11 @@
 from abc import abstractmethod
-from resources.prop import Propagator
-from resources.spacecraft import Spacecraft
-from resources.variable import Variable
-from resources.report import ReportFile, ReportReader
-from resources.celestial import CelestialBody
-from resources.solvers import DifferentialCorrector
-from resources.burns import ImpulseiveBurn
+from .resources.prop import Propagator
+from .resources.spacecraft import Spacecraft
+from .resources.variable import Variable
+from .resources.report import ReportFile, ReportReader
+from .resources.celestial import CelestialBody
+from .resources.solvers import DifferentialCorrector
+from .resources.burns import ImpulseiveBurn
 from enum import Enum
 
 class Comparison(Enum):
