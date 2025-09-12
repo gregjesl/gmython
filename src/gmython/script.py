@@ -3,6 +3,7 @@ from enum import Enum
 from contextlib import contextmanager
 from .resources.resource import Resource
 from .mission import MissionStep
+from .resources.spacecraft import State, Epoch, TimeStandard, ModJulianEpoch, CoordinateSystem, EARTHMJ2000EQ, Spacecraft
 
 class ObjectType(Enum):
     RESOURCE = 1
@@ -18,9 +19,9 @@ class ScriptObject(ABC):
         pass
 
 class Script:
-    def __init__(self, resources: list[Resource], mission: list[MissionStep]) -> None:
-        self.resources = resources
-        self.mission = mission
+    def __init__(self, resources: list[Resource] | None = None, mission: list[MissionStep] | None = None) -> None:
+        self.resources = resources if resources is not None else []
+        self.mission = mission if mission is not None else []
 
     def serialize(self) -> str:
         """
