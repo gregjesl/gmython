@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import math
 
 from .resource import Resource
 from .coordsys import CoordinateSystem, EARTHMJ2000EQ
@@ -49,6 +50,26 @@ class KeplerianState(State):
             f"GMAT {name}.AOP = {self.aop};\n"
             f"GMAT {name}.TA = {self.ta};"
         )
+    
+    @staticmethod
+    def periapsis(sma: float, ecc: float, inc: float, raan: float, aop: float):
+        """Creates a Keplerian orbit starting at periapsis"""
+        return KeplerianState(sma, ecc, inc, raan, aop, 0.0)
+    
+    @staticmethod
+    def apoapsis(sma: float, ecc: float, inc: float, raan: float, aop: float):
+        """Creates a Keplerian orbit starting at apoapsis"""
+        return KeplerianState(sma, ecc, inc, raan, aop, 180.0)
+    
+    def eccentric_anomaly(self) -> float:
+        """Converts the true anomaly to eccentric anomaly"""
+        scale = math.sqrt((1.0 + self.ecc) / (1.0 - self.ecc))
+        lhs = math.tan(math.radians(self.ta) / 2.0) / scale
+        return math.degrees(math.atan(lhs)) * 2.0
+    
+    def r_mag(self) -> float:
+        """Computes the magnitude of the position vector"""
+        return self.sma * (1.0 - (self.ecc * math.cos(math.radians(self.eccentric_anomaly()))))
 
 class ModifiedKeplerianState(State):
     def __init__(self, radper: float, radapo: float, inc: float, raan: float, aop: float, ta: float):

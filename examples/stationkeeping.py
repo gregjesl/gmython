@@ -18,7 +18,7 @@ INCLINATION = 45.0 # Degrees
 coordsys = CoordinateSystem("MoonMJ2000Eq", LUNA, CoordinateSystemAxes.MJ2000Eq)
 
 # Build the satellite
-state = KeplerianState(LUNA.radius_of_altitude(ALTITUDE), 0.0, INCLINATION, 90.0, 135.0, 180.0)
+state = KeplerianState.apoapsis(LUNA.radius_of_altitude(ALTITUDE), 0.0, INCLINATION, 90.0, 135.0)
 sat = Spacecraft("Sat1", state, coord_system=coordsys)
 
 # Build the force model
