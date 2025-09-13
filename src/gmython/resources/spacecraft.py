@@ -117,6 +117,48 @@ class BodyRelativeProperties:
     
     def periapsis_radius(self) -> str:
         return self.preamble + "RadPer"
+    
+    def orbit_period(self) -> str:
+        return self.preamble + "OrbitPeriod"
+    
+    def beta_angle(self) -> str:
+        return self.preamble + "BetaAngle"
+    
+    def C3Energy(self) -> str:
+        return self.preamble + "C3Energy"
+    
+    def energy(self) -> str:
+        return self.preamble + "Energy"
+    
+    def h_mag(self) -> str:
+        """Magnitude of the angular velocity vector"""
+        return self.preamble + "HMAG"
+
+    def incoming_C3_energy(self) -> str:
+        return self.preamble + "IncomingC3Energy"
+    
+    def incoming_rad_per(self) -> str:
+        return self.preamble + "IncomingRadPer"
+    
+    def latitude(self) -> str:
+        """Planetodetic latitude"""
+        return self.preamble + "Latitude (degrees)"
+    
+    def longitude(self) -> str:
+        """Planetodetic longitude"""
+        return self.preamble + "Longitude (degrees)"
+    
+    def local_sidereal_time(self) -> str:
+        """Local sidereal time of the spacecraft from the celestial body's inertial x-axis (degrees)"""
+        return self.preamble + "LST"
+    
+    def apoapsis_velocity(self):
+        """Scalar velocity at apoapsis (km/s)"""
+        return self.preamble + "VelApoapsis"
+    
+    def periapsis_velocity(self):
+        """Scalar velocity at periapsis (km/s)"""
+        return self.preamble + "VelPeriapsis"
 
 class Spacecraft(Resource):
     def __init__(self, name: str, state: State, epoch: Epoch = ModJulianEpoch(TimeStandard.TAI, 21545.0), coord_system: CoordinateSystem = EARTHMJ2000EQ) -> None:
