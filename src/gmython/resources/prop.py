@@ -71,7 +71,6 @@ class NumericalIntegrators(Enum):
     PrinceDormand853    = 6,
     RungeKutta4         = 7
 
-
 class Propagator(Resource):
     def __init__(
         self,

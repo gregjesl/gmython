@@ -50,7 +50,7 @@ class KeplerianState(State):
             f"GMAT {name}.AOP = {self.aop};\n"
             f"GMAT {name}.TA = {self.ta};"
         )
-    
+      
     @staticmethod
     def periapsis(sma: float, ecc: float, inc: float, raan: float, aop: float):
         """Creates a Keplerian orbit starting at periapsis"""
