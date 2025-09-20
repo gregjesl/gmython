@@ -75,7 +75,7 @@ with build_report_reader() as report:
     mission.append(Report(report, ["Sat1.ElapsedDays", burns[0].element1(), burns[1].element1()]))
 
     # Build the script
-    script = Script(resources, mission)
+    script = Script.create(resources, mission)
 
     with dispatch_instance() as dispatch:
         try:
