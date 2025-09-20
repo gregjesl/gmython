@@ -21,12 +21,14 @@ class CoordinateSystem(Resource):
     def to_gmat_script(self) -> str:
         if self.name in PREDEFINED_COORDINATE_SYSTEMS:
             return ""
-        else:
+        elif self.axes is not None:
             return (
                 f"Create CoordinateSystem {self.name};\n"
                 f"GMAT {self.name}.Origin = {self.origin};\n"
                 f"GMAT {self.name}.Axes = {self.axes.name};"
             )
+        else:
+            raise ValueError("Axes must be defined for non-predefined coordinate systems")
 
 EARTHMJ2000EQ = CoordinateSystem("EarthMJ2000Eq", EARTH, None)
 
