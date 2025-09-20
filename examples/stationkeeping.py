@@ -18,7 +18,7 @@ INCLINATION = 45.0 # Degrees
 coordsys = CoordinateSystem("MoonMJ2000Eq", LUNA, CoordinateSystemAxes.MJ2000Eq)
 
 # Build the satellite
-state = KeplerianState(LUNA.radius_of_altitude(ALTITUDE), 0.0, INCLINATION, 90.0, 135.0, 180.0)
+state = KeplerianState.apoapsis(LUNA.radius_of_altitude(ALTITUDE), 0.0, INCLINATION, 90.0, 135.0)
 sat = Spacecraft("Sat1", state, coord_system=coordsys)
 
 # Build the force model
@@ -75,7 +75,7 @@ with build_report_reader() as report:
     mission.append(Report(report, ["Sat1.ElapsedDays", burns[0].element1(), burns[1].element1()]))
 
     # Build the script
-    script = Script(resources, mission)
+    script = Script.create(resources, mission)
 
     with dispatch_instance() as dispatch:
         try:

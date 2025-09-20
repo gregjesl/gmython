@@ -40,8 +40,12 @@ def angular_momentum_headers(obj: Resource, frame: CoordinateSystem) -> list[str
             f"{obj.name}.{frame.name}.HZ",
         ]
 
-class ReportFile(Resource):
-    def __init__(self, name, outfile: str, fields: list[str] = None, headers: bool = True, delimiter: str = " "):
+class ReportResource(Resource):
+    """Base class used for Report resource types"""
+    pass
+
+class ReportFile(ReportResource):
+    def __init__(self, name, outfile: str, fields: list[str] | None = None, headers: bool = True, delimiter: str = " "):
         super().__init__(name)
         self.outfile = outfile
         self.fields = fields if fields is not None else []
@@ -72,7 +76,7 @@ class ReportFile(Resource):
         return "\n".join(lines)
 
 @contextmanager
-def temp_report_file(fields: list[str] = None, headers: bool = True, delimiter: str = " "):
+def temp_report_file(fields: list[str] | None = None, headers: bool = True, delimiter: str = " "):
     with tempfile.NamedTemporaryFile(delete=False) as outfile:
         outfile.close()
         name = Path(outfile.name).stem
@@ -100,8 +104,8 @@ def parse_report(path: str) -> list[dict[str, float]]:
             data.append(dict(zip(fields, row)))
     return data
 
-class ReportReader(Resource):
-    def __init__(self, name: str, file: str, fields: list[str] = None):
+class ReportReader(ReportResource):
+    def __init__(self, name: str, file: str, fields: list[str] | None = None):
         super().__init__(name)
         self.fields = fields if fields is not None else []
         self.file = file
@@ -113,7 +117,7 @@ class ReportReader(Resource):
         return parse_report(self.file)
     
 @contextmanager
-def build_report_reader(fields: list[str] = None):
+def build_report_reader(fields: list[str] | None = None):
     with tempfile.NamedTemporaryFile(delete=False) as outfile:
         outfile.close()
         name = Path(outfile.name).stem
