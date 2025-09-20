@@ -30,19 +30,20 @@ with ExitStack() as stack:
     reports = [stack.enter_context(build_report_reader(["Sat1.ElapsedSecs"] + keplerian_headers(sat, coordsys))) for sat in sats]
     
     # Build the missions
-    missions = []
+    scripts = []
     for sat, report in zip(sats, reports):
 
         # Build the mission sequence
         mission = Propagate(prop, [sat], [("Sat1.ElapsedSecs", 12000.0)])
 
         # Store the mission
-        missions.append(Script([coordsys, sat, model, prop, report], [mission]))
+        script = Script.create([coordsys, sat, model, prop, report], [mission])
+        scripts.append(script)
 
     # Run the batch
     with dispatch_instance() as dispatch:
         try:
-            dispatch.build_and_run_batch(missions)
+            dispatch.build_and_run_batch(scripts)
         except DispatchError as e:
             with open(e.log) as log:
                 print(log.read())

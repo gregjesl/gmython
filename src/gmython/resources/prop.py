@@ -36,7 +36,7 @@ class ErrorControl(Enum):
     LargetsState = 4
 
 class ForceModel(Resource):
-    def __init__(self, name: str, gravity: GravityField, body: CelestialBody, point_masses: list[CelestialBody] = None):
+    def __init__(self, name: str, gravity: GravityField, body: CelestialBody, point_masses: list[CelestialBody] | None = None):
         super().__init__(name)
         self.gravity_field = gravity
         self.body = body
@@ -61,27 +61,44 @@ class ForceModel(Resource):
         script += self.gravity_field.to_gmat_script(self.name)
         return script
 
+class NumericalIntegrators(Enum):
+    """An enumeration of available numerical integrators"""
+    RungeKutta89        = 1,
+    PrinceDormand78     = 2,
+    PrinceDormand45     = 3,
+    RungeKutta68        = 4,
+    RungeKutta56        = 5,
+    PrinceDormand853    = 6,
+    RungeKutta4         = 7
+
 class Propagator(Resource):
     def __init__(
         self,
         name: str,
         force_model: ForceModel,
+        method: NumericalIntegrators = NumericalIntegrators.RungeKutta89,
+        initial_step_size: float = 60.0,
+        accuracy: float = 1e-11,
+        min_step: float = 0.001,
+        max_step: float = 2700.0,
+        max_attempts: int = 50,
+        stop_if_violated: bool = True
     ):
         super().__init__(name)
         self.force_model_name = force_model.name
-        self.method = "RungeKutta89"
-        self.initial_step_size = 60.0
-        self.accuracy = 1e-11
-        self.min_step = 0.001
-        self.max_step = 2700.0
-        self.max_attempts = 50
-        self.stop_if_violated = True
+        self.method = method
+        self.initial_step_size = initial_step_size
+        self.accuracy = accuracy
+        self.min_step = min_step
+        self.max_step = max_step
+        self.max_attempts = max_attempts
+        self.stop_if_violated = stop_if_violated
 
     def to_gmat_script(self) -> str:
         return (
             f"Create Propagator {self.name};\n"
             f"GMAT {self.name}.FM = {self.force_model_name};\n"
-            f"GMAT {self.name}.Type = {self.method};\n"
+            f"GMAT {self.name}.Type = {self.method.name};\n"
             f"GMAT {self.name}.InitialStepSize = {self.initial_step_size};\n"
             f"GMAT {self.name}.Accuracy = {self.accuracy};\n"
             f"GMAT {self.name}.MinStep = {self.min_step};\n"
