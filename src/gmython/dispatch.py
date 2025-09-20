@@ -28,7 +28,7 @@ class Dispatch:
     
     def run(self, script: str):
         code = subprocess.run([self.cmdlet, "--verbose", "off", "--logfile", self.logfile, "--run", script], stdout=subprocess.DEVNULL).returncode
-        if code != 0:
+        if code > 1:
             raise DispatchError(script, code, self.logfile)
         
     def build_and_run(self, script: Script):
