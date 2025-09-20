@@ -30,7 +30,7 @@ with build_report_reader(fields) as report:
     mission = Propagate(prop, [sat], [("Sat1.ElapsedSecs", 12000.0)])
 
     # Build the script
-    script = Script([coordsys, sat, model, prop, report], [mission])
+    script = Script.create([coordsys, sat, model, prop, report], [mission])
 
     with dispatch_instance() as dispatch:
         try:

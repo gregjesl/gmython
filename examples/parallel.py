@@ -30,17 +30,18 @@ with ExitStack() as stack:
     reports = [stack.enter_context(build_report_reader(["Sat1.ElapsedSecs"] + keplerian_headers(sat, coordsys))) for sat in sats]
     
     # Build the missions
-    missions = []
+    scripts = []
     for sat, report in zip(sats, reports):
 
         # Build the mission sequence
         mission = Propagate(prop, [sat], [("Sat1.ElapsedSecs", 12000.0)])
 
         # Store the mission
-        missions.append(Script([coordsys, sat, model, prop, report], [mission]))
+        script = Script.create([coordsys, sat, model, prop, report], [mission])
+        scripts.append(script)
     # Run the batch
     if __name__ == "__main__":
-        dispatch.parallel_process(missions)
+        dispatch.parallel_process(scripts)
 
         # Print the last line in each report
         for report in reports:

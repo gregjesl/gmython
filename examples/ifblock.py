@@ -24,7 +24,7 @@ with build_report_reader() as report:
     loop.append(Report(report, [variable.name]))
     
     # Build the script
-    script = Script([variable, report], [loop])
+    script = Script.create([variable, report], [loop])
 
     with dispatch_instance() as dispatch:
         try:
