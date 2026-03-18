@@ -100,6 +100,9 @@ def parse_report(path: str) -> list[dict[str, float]]:
             try:
                 row = [float(value) for value in values]
             except ValueError as e:
+                if values == fields:
+                    # Echo of fields encountered
+                    continue
                 raise ValueError(f"Non-float value encountered: {e}")
             data.append(dict(zip(fields, row)))
     return data
