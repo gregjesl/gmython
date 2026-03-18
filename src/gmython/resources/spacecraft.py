@@ -69,7 +69,6 @@ class KeplerianState(State):
         scale = math.sqrt((1.0 + self.ecc) / (1.0 - self.ecc))
         if isinstance(self.ta, Variable):
             raise ValueError("True anomaly must be a float, not a variable")
-        scale = math.sqrt((1.0 + self.ecc) / (1.0 - self.ecc))
         lhs = math.tan(math.radians(self.ta) / 2.0) / scale
         return math.degrees(math.atan(lhs)) * 2.0
     
