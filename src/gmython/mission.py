@@ -7,13 +7,14 @@ from .resources.celestial import CelestialBody
 from .resources.solvers import DifferentialCorrector
 from .resources.burns import ImpulseiveBurn
 from enum import Enum
+from typing import Any
 
 class Comparison(Enum):
     EQUAL = 1,
     LESS_THAN = 2,
     GREATER_THAN = 3
 
-    def serialize(self) -> str:
+    def __str__(self) -> str:
         if self == Comparison.EQUAL:
             return "="
         elif self == Comparison.LESS_THAN:
@@ -23,14 +24,20 @@ class Comparison(Enum):
         else:
             raise Exception("Unhandled comparison")
 
+    def serialize(self) -> str:
+        return str(self)
+
 class Condition:
-    def __init__(self, parameter: str, comparison: Comparison, value: float):
+    def __init__(self, parameter: Any, comparison: Comparison, value: Any):
         self.parameter = parameter
         self.comparison = comparison
         self.value = value
 
-    def serialize(self) -> str:
+    def __str__(self) -> str:
         return f"{self.parameter} {self.comparison.serialize()} {self.value}"
+
+    def serialize(self) -> str:
+        return str(self)
     
 class MissionStep:
     def __init__(self, verb, description = "") -> None:
