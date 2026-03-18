@@ -34,8 +34,6 @@ with build_report_reader() as report:
         Assignment(xhat[2], 0)
         ], [loop])
 
-    print(script.serialize())
-
     with dispatch_instance() as dispatch:
         try:
             dispatch.build_and_run(script)
