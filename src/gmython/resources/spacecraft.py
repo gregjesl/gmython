@@ -5,6 +5,7 @@ from .resource import Resource
 from .coordsys import CoordinateSystem, EARTHMJ2000EQ
 from .epoch import Epoch, TimeStandard, ModJulianEpoch
 from .celestial import CelestialBody
+from .variable import Variable
 
 class State:
     @abstractmethod
@@ -12,7 +13,7 @@ class State:
         pass
 
 class CartesianState(State):
-    def __init__(self, x: float, y: float, z: float, vx: float, vy: float, vz: float):
+    def __init__(self, x: float | Variable, y: float | Variable, z: float | Variable, vx: float | Variable, vy: float | Variable, vz: float | Variable):
         self.x = x
         self.y = y
         self.z = z
@@ -32,7 +33,7 @@ class CartesianState(State):
         )
 
 class KeplerianState(State):
-    def __init__(self, sma: float, ecc: float, inc: float, raan: float, aop: float, ta: float):
+    def __init__(self, sma: float | Variable, ecc: float | Variable, inc: float | Variable, raan: float | Variable, aop: float | Variable, ta: float | Variable):
         self.sma = sma    # Semi-major axis
         self.ecc = ecc    # Eccentricity
         self.inc = inc    # Inclination
@@ -63,16 +64,24 @@ class KeplerianState(State):
     
     def eccentric_anomaly(self) -> float:
         """Converts the true anomaly to eccentric anomaly"""
+        if isinstance(self.ecc, Variable):
+            raise ValueError("Eccentricity must be a float, not a variable")
         scale = math.sqrt((1.0 + self.ecc) / (1.0 - self.ecc))
+        if isinstance(self.ta, Variable):
+            raise ValueError("True anomaly must be a float, not a variable")
         lhs = math.tan(math.radians(self.ta) / 2.0) / scale
         return math.degrees(math.atan(lhs)) * 2.0
     
     def r_mag(self) -> float:
         """Computes the magnitude of the position vector"""
+        if isinstance(self.sma, Variable):
+            raise ValueError("Semi-major axis must be a float, not a variable")
+        if isinstance(self.ecc, Variable):
+            raise ValueError("Eccentricity must be a float, not a variable")
         return self.sma * (1.0 - (self.ecc * math.cos(math.radians(self.eccentric_anomaly()))))
 
 class ModifiedKeplerianState(State):
-    def __init__(self, radper: float, radapo: float, inc: float, raan: float, aop: float, ta: float):
+    def __init__(self, radper: float, radapo: float, inc: float | Variable, raan: float | Variable, aop: float | Variable, ta: float | Variable):
         if radapo < radper:
             raise Exception("Apoapsis radius must be larger than periapsis radius")
         self.radper = radper    # Radius of perigee

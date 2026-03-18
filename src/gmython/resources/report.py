@@ -96,7 +96,7 @@ def parse_report(path: str) -> list[dict[str, float]]:
         for line in lines[1:]:
             values = line.strip().split()
             if len(values) != len(fields):
-                raise ValueError(f"Row length mismatch: {values}")
+                raise ValueError(f"Expected {len(fields)} columns, found {len(values)}\nFields: {fields}\nRow: {values}")
             try:
                 row = [float(value) for value in values]
             except ValueError as e:

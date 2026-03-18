@@ -2,14 +2,14 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from contextlib import contextmanager
 from .resources.resource import Resource
-from .mission import MissionStep
+from .mission import MissionStep, Assignment
 from .resources.spacecraft import State, Epoch, TimeStandard, ModJulianEpoch, CoordinateSystem, EARTHMJ2000EQ, Spacecraft
 from .resources.coordsys import CoordinateSystemAxes
 from .resources.celestial import CelestialBody
 from .resources.prop import ForceModel, Propagator
 from .resources.burns import ImpulseiveBurn
 from .resources.report import ReportResource
-from .resources.variable import Variable
+from .resources.variable import Variable, Array
 from .resources.solvers import DifferentialCorrector
 
 class ObjectType(Enum):
@@ -30,19 +30,21 @@ class Script:
         self.resources = []
         self.mission = []
     
-    def add_resource(self, resource: Resource) -> Resource:
-        if not isinstance(resource, Resource):
-            raise ValueError("Input is not a Resource")
+    def add_resource(self, resource: Resource | Assignment) -> Resource | Assignment:
+        if not isinstance(resource, Resource) and not isinstance(resource, Assignment):
+            raise ValueError("Input is not a Resource or Assignment")
 
         order = [
             Variable,
+            Array,
             CoordinateSystem,
             Spacecraft,
             ImpulseiveBurn,
             ForceModel,
             Propagator,
             DifferentialCorrector,
-            ReportResource
+            ReportResource,
+            Assignment
         ]
 
         # Find the priority index based on inheritance
@@ -80,7 +82,7 @@ class Script:
         self.mission = mission
 
     @staticmethod
-    def create(resources: list[Resource], mission: list[MissionStep] | None = None):
+    def create(resources: list[Resource | Assignment], mission: list[MissionStep] | None = None):
         result = Script()
         for resource in resources:
             result.add_resource(resource)

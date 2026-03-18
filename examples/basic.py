@@ -22,12 +22,12 @@ model = ForceModel("LunaForceModel", gravity, body=LUNA, point_masses=[EARTH])
 prop = Propagator("DefaultProp", model)
 
 # Build the report file
-fields = ["Sat1.ElapsedSecs"] + keplerian_headers(sat, coordsys)
+fields = [sat.elapsed_secs()] + keplerian_headers(sat, coordsys)
 
 with build_report_reader(fields) as report:
 
     # Build the mission sequence
-    mission = Propagate(prop, [sat], [("Sat1.ElapsedSecs", 12000.0)])
+    mission = Propagate(prop, [sat], [(sat.elapsed_secs(), 12000.0)])
 
     # Build the script
     script = Script.create([coordsys, sat, model, prop, report], [mission])

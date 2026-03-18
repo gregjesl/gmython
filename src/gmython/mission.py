@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from .resources.prop import Propagator
 from .resources.spacecraft import Spacecraft
-from .resources.variable import Variable
+from .resources.variable import Variable, ArrayValue
 from .resources.report import ReportFile, ReportReader
 from .resources.celestial import CelestialBody
 from .resources.solvers import DifferentialCorrector
@@ -46,6 +46,15 @@ class MissionStep:
             return f"{self.verb} '{self.description}' "
         else:
             return f"{self.verb}"
+        
+class Assignment(MissionStep):
+    """Assigns a value to a variable"""
+    def __init__(self, variable, value) -> None:
+        super().__init__(str(variable), "")
+        self.value = value
+
+    def to_gmat_script(self) -> str:
+        return f"{self.preamble()} = {str(self.value)}"
 
 class Propagate(MissionStep):
     def __init__(self, prop: Propagator, sats: list[Spacecraft], termination: list[tuple[str, float | None]], description = "") -> None:
@@ -135,6 +144,7 @@ class MissionLogic(MissionStep):
         self.contents.append(contents)
 
 class ForLoop(MissionLogic):
+    """This syntex increments Index from Start to End in steps of 1, repeating the script statements until Index is greater than End. If Start is greater than End, then the script statements do not execute."""
     def __init__(self, variable: Variable, start: int, step: int, end: int, contents: list[MissionStep] | None = None):
         super().__init__(f"For {variable.name} = {start}:{step}:{end};", contents, "EndFor;")
 
