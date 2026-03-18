@@ -168,6 +168,50 @@ class BodyRelativeProperties:
     def periapsis_velocity(self):
         """Scalar velocity at periapsis (km/s)"""
         return self.preamble + "VelPeriapsis"
+    
+class FrameRelativeProperties:
+    def __init__(self, name: str, frame: CoordinateSystem):
+        self.preamble = f"{name}.{frame.name}."
+
+    def inc(self) -> str:
+        return self.preamble + "INC"
+    
+    def raan(self) -> str:
+        return self.preamble + "RAAN"
+    
+    def aop(self) -> str:
+        return self.preamble + "AOP"
+    
+    def x(self) -> str:
+        return self.preamble + "X"
+    
+    def y(self) -> str:
+        return self.preamble + "Y"
+    
+    def z(self) -> str:
+        return self.preamble + "Z"
+    
+    def vx(self) -> str:
+        return self.preamble + "VX"
+    
+    def vy(self) -> str:
+        return self.preamble + "VY"
+    
+    def vz(self) -> str:
+        return self.preamble + "VZ"
+    
+    def vmag(self) -> str:
+        """Magnitude of the velocity vector"""
+        return self.preamble + "VMAG"
+    
+    def hx(self) -> str:
+        return self.preamble + "HX"
+    
+    def hy(self) -> str:
+        return self.preamble + "HY"
+    
+    def hz(self) -> str:
+        return self.preamble + "HZ"
 
 class Spacecraft(Resource):
     def __init__(self, name: str, state: State, epoch: Epoch = ModJulianEpoch(TimeStandard.TAI, 21545.0), coord_system: CoordinateSystem = EARTHMJ2000EQ) -> None:
@@ -188,6 +232,9 @@ class Spacecraft(Resource):
     
     def relative_to(self, body: CelestialBody) -> BodyRelativeProperties:
         return BodyRelativeProperties(self.name, body)
+    
+    def with_frame(self, frame: CoordinateSystem) -> FrameRelativeProperties:
+        return FrameRelativeProperties(self.name, frame)
     
     def elapsed_days(self) -> str:
         return f"{self.name}.ElapsedDays"
