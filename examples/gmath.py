@@ -4,12 +4,14 @@ from gmython.script import Script
 from gmython.resources.variable import Variable, Vector
 from gmython.mission import ForLoop, Report, Assignment
 from gmython import gmath
+from gmython.recipes import angle2
 
 # Create a variable
 angle = Variable("Angle")
 vector = Vector.vector2("A")
 xhat = Vector.vector2("xhat")
 result = Variable("Result")
+echo = Variable("Echo")
 
 # Create a report reader
 with build_report_reader() as report:
@@ -21,7 +23,8 @@ with build_report_reader() as report:
     loop.append(Assignment(vector[1], gmath.cos(gmath.DegToRad(angle))))
     loop.append(Assignment(vector[2], gmath.sin(gmath.DegToRad(angle))))
     loop.append(Assignment(result, xhat.dot(vector)))
-    loop.append(Report(report, [angle.name, result.name]))
+    loop.append(angle2(xhat, vector, echo))
+    loop.append(Report(report, [angle.name, result.name, echo.name]))
     
     # Build the script
     script = Script.create([
@@ -29,6 +32,7 @@ with build_report_reader() as report:
         vector,
         xhat,
         result,
+        echo,
         report,
         Assignment(xhat[1], 1),
         Assignment(xhat[2], 0)
