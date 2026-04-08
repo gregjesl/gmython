@@ -64,9 +64,13 @@ class Assignment(MissionStep):
         return f"{self.preamble()} = {str(self.value)}"
 
 class Propagate(MissionStep):
-    def __init__(self, prop: Propagator, sats: list[Spacecraft], termination: list[tuple[str, float | None]], description = "") -> None:
+    def __init__(self, prop: Propagator, sats: list[Spacecraft], termination: list[tuple[str, float | None]], backwards: bool = False, description = "") -> None:
         super().__init__("Propagate", description)
         self.prop = prop
+        if backwards:
+            self.direction = "BackProp "
+        else:
+            self.direction = "" # Implies forwards
 
         if not sats:
             raise ValueError("Must have at least one satellite to propagate") 
@@ -94,7 +98,7 @@ class Propagate(MissionStep):
                 terms.append(f"{term[0]} = {term[1]}")
         term_list = ", ".join(terms)
 
-        return f"{self.preamble()} {self.prop.name}{sat_list} {{{term_list}}}"
+        return f"{self.preamble()} {self.direction}{self.prop.name}{sat_list} {{{term_list}}}"
 
 class Maneuver(MissionStep):
     def __init__(self,  burn: ImpulseiveBurn, spacecraft: Spacecraft, description = ""):
